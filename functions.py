@@ -4,18 +4,12 @@
 This could split them up by category based upon the current naming
 scheme and we can send the relevant people the comments related to their departments.
 Developers get techincal problems. Designers get journey problems. HMRC get amount issues"""
+import re
+
+from nltk.corpus import stopwords
 
 
-def label_data(data, letter):
-
-    """I have to select a specific range of these
-    ones because I havent done all of the labelling
-    and I switched conventions at index 125. This is
-    specific to this file and to make
-    it reproducible the format must be standardised.
-
-    It then resets the index to help the iteration"""
-    data = data.iloc[125:433].dropna(subset='Cat').reset_index()
+def return_labels(data, letter):
     """Creates a series out of the label columns"""
     series = data['Cat']
 
@@ -32,9 +26,23 @@ def label_data(data, letter):
         (string etc 'JTCIA')"""
         labels.append((letter in i))
 
-    """The new data frame with only those where the """
-    data['labels'] = labels
+    """Return a list of whether those comments are related to the topic or not."""
+    return labels
 
-    """Return the data with an added column that is true if that row is in the category
-    and 0 if it is not. """
-    return data
+
+def clean_text(text):
+    """
+        text: a string
+
+        return: modified initial string
+    """
+    REPLACE_BY_SPACE_RE = re.compile('[/(){}@,;]')
+    BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
+    STOPWORDS = set(stopwords.words('english'))
+    text = str(text)
+
+    text = text.lower()  # lowercase text
+    text = REPLACE_BY_SPACE_RE.sub(' ', text)  # replace REPLACE_BY_SPACE_RE symbols by space in text
+    text = BAD_SYMBOLS_RE.sub('', text)  # delete symbols which are in BAD_SYMBOLS_RE from text
+    text = ' '.join(word for word in text.split() if word not in STOPWORDS)  # delete stopwors from text
+    return text
