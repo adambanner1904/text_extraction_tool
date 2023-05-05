@@ -46,3 +46,17 @@ def clean_text(text):
     text = BAD_SYMBOLS_RE.sub('', text)  # delete symbols which are in BAD_SYMBOLS_RE from text
     text = ' '.join(word for word in text.split() if word not in STOPWORDS)  # delete stopwors from text
     return text
+
+
+def add_columns(data):
+    """Takes in a data frame and adds the categorical truth labels for each
+    column."""
+
+    data['j'] = return_labels(data, 'J')
+    data['t'] = return_labels(data, 'T')
+    data['i'] = return_labels(data, 'I')
+    data['a'] = return_labels(data, 'A')
+    data['c'] = return_labels(data, 'C')
+
+    """Returns the modified dataframe"""
+    return data
